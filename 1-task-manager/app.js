@@ -1,13 +1,11 @@
 const express = require("express");
 const app = express();
-
 const dotenv = require("dotenv");
 dotenv.config();
-
 const colors = require("colors");
 colors.enable();
 const tasks = require("./routes/task");
-
+const connectDB = require("./db/connect");
 // Middleware
 app.use(express.json());
 
@@ -18,9 +16,18 @@ app.get("/hello", (req, res) => {
 
 app.use("/api/v1/tasks", tasks);
 
-const port = process.env.PORT;
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(
+      process.env.PORT,
+      console.log(
+        `Server is listening in port ${process.env.PORT}`.blue.underline.bold
+      )
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-app.listen(
-  port,
-  console.log(`Server is listening in port ${port}`.blue.underline.bold)
-);
+start();
