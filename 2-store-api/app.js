@@ -1,13 +1,14 @@
 require("dotenv").config();
 require("colors");
-// Async Errors
+require("express-async-errors");
 
+// Async Errors
 const express = require("express");
 const app = express();
-
 const notFoundMiddleware = require("./middleware/not-found");
 const ErrorMiddleware = require("./middleware/error-handler");
 const connectDB = require("./db/connect");
+const productsRouter = require("./routes/products");
 
 // Middleware
 app.use(express.json());
@@ -19,13 +20,13 @@ app.get("/", (req, res) => {
   );
 });
 
-// Product Route
+app.use("/api/v1/products", productsRouter);
 
+// Product Route
 app.use(notFoundMiddleware);
 app.use(ErrorMiddleware);
 
 const port = process.env.PORT || 5001;
-
 const start = async () => {
   try {
     // connectDB
